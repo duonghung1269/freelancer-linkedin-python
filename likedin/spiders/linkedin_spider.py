@@ -24,18 +24,17 @@ class LinkedinSpider(scrapy.Spider):
         for li in response.xpath('//div[@id="results-container"]/ol[@id="results"]/li'):
             aElement = li.xpath('div[@class="bd"]/h3/a')
             companies = li.xpath('dl[@class="snippet"]/p[@class="title"]//b')
-			#fullCompanyName = []
-			# for company in companies:
-			#     fullCompanyName.append(company.xpath('text()').extract())
             fullName = aElement.xpath('text()').extract()[0]
+            fullNames = fullName.split(" ")
+            firstName = ""
+            lastName = ""
+
+            if len(fullNames) > 1:
+                firstName = fullNames[0]
+                fullNames.pop(0)
+                lastName = " ".join(fullNames)
             profileUrl = aElement.xpath('@href').extract()[0]
-            print fullName
-            item = LikedinItem(fullname=fullName, firstname=fullName, lastname=fullName, profileurl=profileUrl)
+            profileUrl = profileUrl[0:profileUrl.index("&")]
+            item = LikedinItem(fullname=fullName, firstname=firstName, lastname=lastName, profileurl=profileUrl)
             items.append(item)
         return items
-        #for li in response.xpath('//div')
-        # employees = response.xpath('//div[@id="results-container"]/ol[@id="results"]/li')
-		# for employee in employees:
-		#     aElement = employee.xpath('div[@class="bd"]/h3/a')
-		# 	fullName = aElement.xpath('text()').extract()
-		# 	print fullName
