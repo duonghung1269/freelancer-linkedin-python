@@ -9,6 +9,11 @@ class LinkedinSpider(scrapy.Spider):
     def start_requests(self):
         # TODO: need to read all copany ID from csv file here
         # url format: https://www.linkedin.com/vsearch/p?f_CC={id_from_csv}&trk=rr_connectedness
+
+        # f = open("urls.txt")
+        # start_urls = [url.strip() for url in f.readlines()]
+        # f.close()
+
         yield scrapy.Request('file:///C:/Users/sgscdhdx/Downloads/Archive/Search _ LinkedIn.htm', self.parse)
         #yield scrapy.Request('http://www.example.com/2.html', self.parse)
         #yield scrapy.Request('http://www.example.com/3.html', self.parse)
@@ -23,7 +28,9 @@ class LinkedinSpider(scrapy.Spider):
         items = []
         for li in response.xpath('//div[@id="results-container"]/ol[@id="results"]/li'):
             aElement = li.xpath('div[@class="bd"]/h3/a')
-            companies = li.xpath('dl[@class="snippet"]/p[@class="title"]//b')
+            companies = li.xpath('//p[@class="title"]/b')
+            print len(companies)		
+            companie = " ".join([company.xpath('text()').extract()[0] for company in companies])
             fullName = aElement.xpath('text()').extract()[0]
             fullNames = fullName.split(" ")
             firstName = ""
@@ -35,6 +42,7 @@ class LinkedinSpider(scrapy.Spider):
                 lastName = " ".join(fullNames)
             profileUrl = aElement.xpath('@href').extract()[0]
             profileUrl = profileUrl[0:profileUrl.index("&")]
-            item = LikedinItem(fullname=fullName, firstname=firstName, lastname=lastName, profileurl=profileUrl)
+            
+            item = LikedinItem(companyname=companie, fullname=fullName, firstname=firstName, lastname=lastName, profileurl=profileUrl)
             items.append(item)
         return items

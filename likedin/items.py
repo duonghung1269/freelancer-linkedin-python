@@ -9,7 +9,8 @@ import scrapy
 
 
 class LikedinItem(scrapy.Item):
-    # define the fields for your item here like:    
+    # define the fields for your item here like:
+    companyname = scrapy.Field()
     fullname = scrapy.Field()
     firstname = scrapy.Field()
     lastname = scrapy.Field()
